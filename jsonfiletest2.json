@@ -1,0 +1,34 @@
+{
+  "data": {
+    "age": 35,
+    "language": [
+      "Python",
+      "Java"
+    ],
+    "name": "Suarmin Ramadhan",
+    "skill": [
+      {
+        "name": "silat",
+        "level": "advance"
+      },
+      {
+        "name": "ngoding",
+        "level": "expert"
+      }
+    ],
+    "dashboard": {
+      "point": 1.5,
+      "type": [
+        "guest",
+        "admin",
+        {
+          "nilai": 1,
+          "perilaku": "baik"
+        }
+      ]
+    },
+    "is_correct": true,
+    "class": "",
+    "section": null
+  }
+}
