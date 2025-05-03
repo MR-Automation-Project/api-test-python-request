@@ -1,6 +1,6 @@
 import json
 
-with open('D:\\ORG_REPO\\MR-Automation-Project\\api-test-python-request\\jsonfiletest.json') as file:
+with open('/api-test-python-request/jsonfiletest.json') as file:
     jsonData = json.load(file)
 
 print(jsonData)
