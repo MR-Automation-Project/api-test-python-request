@@ -17,7 +17,7 @@
       }
     ],
     "dashboard": {
-      "point": 1,
+      "point": 1.5,
       "type": [
         "guest",
         "admin",
