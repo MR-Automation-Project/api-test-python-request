@@ -1,3 +1,5 @@
+from tokenize import cookie_re
+
 import requests
 import check_request_and_response
 import configparser
@@ -11,15 +13,17 @@ class TestLoginToSubmitQuizPsRefactor:
 
     checker = check_request_and_response.Checker
     accessToken = None
+    session = requests.session()
 
     def test_get_school_list(self):
         url = getConfig()['PS-STAGING-V2']['baseUrl'] + path.V2SchoolList
         params = {"page_size":"9999"}
 
-        response = requests.get(url, params=params)
+        response = self.session.get(url, params=params)
 
         #For Check Request Body / Header Only
-        # checker.check_request(response)
+        self.checker.check_request(response)
+        self.checker.check_response_headers(response)
 
         #Validation
         httpStatusCode = response.status_code
@@ -34,10 +38,11 @@ class TestLoginToSubmitQuizPsRefactor:
     def test_post_login_student(self):
         url = getConfig()['PS-STAGING-V2']['baseUrl'] + path.V2Login
         payloadLogin = loginPayLoads()
-        response = requests.post(url, json=payloadLogin)
+        response = self.session.post(url, json=payloadLogin)
 
-        # # For Check Request Body / Header Only
-        # checker.check_request(response)
+        #For Check Request Body / Header Only
+        self.checker.check_request(response)
+        self.checker.check_response_headers(response)
 
         # Validation
         httpStatusCode = response.status_code
