@@ -40,3 +40,5 @@ class TestApi:
         ## jika spt ini akan error, karena blm diconvert dengan json format, tidak dapat diolah/diparsing spt contoh diatas!
         # responseBodyText = response.text
         # print(responseBodyText["count"])
+
+
