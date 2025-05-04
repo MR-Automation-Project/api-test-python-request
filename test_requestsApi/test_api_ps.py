@@ -1,51 +1,74 @@
-import json
-from tabnanny import check
-
 import requests
-import pytest
 import check_request_and_response
+import configparser
 
-class TestApi:
+from test_requestsApi.Api_notes import TestApi
+from utilize.configurations import *
+from utilize.resourcePath import ResourcePath as path
+from utilize.payload import *
+
+class TestLoginToSubmitQuizPsRefactor:
+
     checker = check_request_and_response.Checker
-    baseUrl: str = "https://backend-v2.portal-sekolah.com"
-    school_list_path: str = "/api/v2/school/schools/"
-    school_list_params = {"page_size":"9999"}
-    login_path = "/api/v2/auth/login/"
+    accessToken = None
 
     def test_get_school_list(self):
-        response = requests.get(TestApi.baseUrl + TestApi.school_list_path,
-                                params=TestApi.school_list_params,
-                                )
-        TestApi.checker.check_request(self, response)
+        url = getConfig()['PS-STAGING-V2']['baseUrl'] + path.V2SchoolList
+        params = {"page_size":"9999"}
 
-        httpCode = response.status_code
-        assert httpCode == 200, f'http response code is wrong, got {httpCode}, should be 200'
-        print(f'\nSchool List: success validate http response code is {httpCode}')
+        response = requests.get(url, params=params)
 
+        #For Check Request Body / Header Only
+        # checker.check_request(response)
+
+        #Validation
+        httpStatusCode = response.status_code
+        assert httpStatusCode == 200, f'httpStatusCode Expected is 200, but got {httpStatusCode}'
         jsonBody = response.json()
-        code = jsonBody['code']
-        assert code == 200, f'code in response body is wrong, actual:{code}, expected:200'
-        print(f'School List: success validate json response code is {code}\n')
+        assert jsonBody['code'] == 200, f'code in json body Expected is 200, but got:{jsonBody['code']}'
+        print(f'\nSCHOOL LIST: success validate http response code is {httpStatusCode}')
+        print(f'SCHOOL LIST: success validate json response code is {jsonBody['code']}')
+
         print("=========================================================================================================")
 
     def test_post_login_student(self):
-        loginBody = {
-            "login": "student.vpnsmp1_01",
-            "school_id": 1469,
-            "password": "portal732"
-        }
-        response = requests.post(TestApi.baseUrl + TestApi.login_path,
-                                json=loginBody,
-                                )
-        TestApi.checker.check_request(self, response)
+        url = getConfig()['PS-STAGING-V2']['baseUrl'] + path.V2Login
+        payloadLogin = loginPayLoads()
+        response = requests.post(url, json=payloadLogin)
 
-        httpCode = response.status_code
-        assert httpCode == 201, f'http response code is wrong, got {httpCode}, should be 201'
-        print(f'\nLogin: success validate http response code is {httpCode}')
+        # # For Check Request Body / Header Only
+        # checker.check_request(response)
 
+        # Validation
+        httpStatusCode = response.status_code
+        assert httpStatusCode == 201, f'httpStatusCode Expected is 201, but got {httpStatusCode}'
         jsonBody = response.json()
-        code = jsonBody['code']
-        assert code == 201, f'code in response body is wrong, actual:{code}, expected:201'
-        print(f'Login: success validate json response code is {code}')
+        assert jsonBody['code'] == 201, f'code in json body Expected is 201, but got:{jsonBody['code']}'
+        accessToken = jsonBody['data']['jwt']['access']
+        TestLoginToSubmitQuizPsRefactor.accessToken = accessToken
+        print(f'\ncetak token : {TestLoginToSubmitQuizPsRefactor.accessToken[-5:]}')
+        print(f'LOGIN: success validate http response code is {httpStatusCode}')
+        print(f'LOGIN: success validate json response code is {jsonBody['code']}')
+
         print("=========================================================================================================")
-        TestApi.checker.check_response_body(self, response)
+
+    #
+    # # def get_token(test_login_student):
+    # #     accessToken = jsonBody["data"]["jwt"]["access"]
+    # #     assert accessToken is not None, f'accessToken gagal ter-extract'
+    # #     return accessToken
+    # #
+    # # def test_loggedinusersdetailsnew(self):
+    # #     acctoken = self.test_login_student().get_token()
+    # #     headers = {"Authorization": f"Bearer {acctoken}"}
+    # #     response = requests.get(TestApi.baseUrl + TestApi.loggedinusersdetails_path,
+    # #                              headers=headers
+    # #                              )
+    # #
+    # #     # Validate http status_code
+    # #     httpCodeLoggedinUsersDetails = response.status_code
+    # #     assert httpCodeLoggedinUsersDetails == 200, f'http response code is wrong, got {httpCodeLoggedinUsersDetails}, should be 200'
+    # #     print(f'\nLoggedInUsersDetailsNew: success validate http response code is {httpCodeLoggedinUsersDetails}')
+    # #     # if httpCode == 500:
+    # #     #     jsonBody = response.json()
+    # #     #     print(f'got error 500 with message is {jsonBody["message"]}')

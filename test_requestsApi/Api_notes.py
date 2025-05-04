@@ -8,7 +8,7 @@ class TestApi:
     school_list_path: str = "/api/v2/school/schools/"
     school_list_params = {"page_size":"9999"}
 
-    def test_get_school_list(self):
+    def get_school_list(self):
         response = requests.get(TestApi.baseUrl + TestApi.school_list_path,
                                 params=TestApi.school_list_params,
                                 )
